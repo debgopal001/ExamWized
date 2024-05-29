@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<script>
+   $(document).ready( function () {
+   $('#table_id').DataTable();
+   } );
+
+
+</script>
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Question Papers</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Question Papers</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% include 'includes/messages.html' %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="table_id" class="table table-hover table-center mb-0">
+                            <thead>
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">Subject Name</th>
+                                <th class="text-center">Session  Year</th>
+                                <th class="text-center">Course</th>
+                                <th class="text-center">Setter</th>
+                                <th class="text-center">Reviewer</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Created At</th>
+                                <th class="text-center">Updated At</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in question_papers %}
+                            <tr>
+                                <td>{{i.id}}</td>
+                                <td>{{i.subject_id.name}}</td>
+                                <td>{{i.session_year_id.session_start}} To {{i.session_year_id.session_end}}</td>
+                                <td>{{i.subject_id.course.name}}</td>
+                                <td>{{i.question_setter_staff_id.admin.first_name}}&nbsp;{{i.question_setter_staff_id.admin.last_name}}</td>
+                                <td>{{i.reviewer_staff_id.admin.first_name}}&nbsp;{{i.reviewer_staff_id.admin.last_name}}</td>
+                                <td>{{i.status}}</td>
+                                <td>{{i.created_at}}</td>
+                                <td>{{i.updated_at}}</td>
+                                <td class="text-right">
+                                    <div class="actions">
+                                        {% if i.question_setter_staff_id == logged_in_user and i.status != 2 %}
+                                        <a href="{% url 'staff_edit_question_paper' i.id %}"
+                                           class="btn btn-sm bg-warning mr-2">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        {% else %}
+                                        {% endif %}
+
+                                        {% if i.reviewer_staff_id == logged_in_user and i.status != 2 %}
+                                        <a href="{% url 'staff_review_question_paper' i.id %}"
+                                           class="btn btn-sm bg-info mr-2">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% else %}
+                                        {% endif %}
+
+                                        {% if i.status == 2 %}
+
+                                        <a href="{% url 'staff_view_question_paper' i.id %}"
+                                           class="btn btn-sm bg-success mr-2">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        {% else %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
